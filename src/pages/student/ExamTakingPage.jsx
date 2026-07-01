@@ -1,95 +1,219 @@
-return (
-  <div className="min-h-screen bg-slate-100">
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import api from "../../services/api";
 
-    {/* Header */}
+export default function ExamTakingPage() {
+  const { examId } = useParams();
+  const navigate = useNavigate();
 
-    <div className="bg-blue-700 text-white px-8 py-4 shadow-lg flex justify-between items-center">
+  const [exam, setExam] = useState(null);
+  const [questions, setQuestions] = useState([]);
+  const [answers, setAnswers] = useState({});
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [instructionsAccepted, setInstructionsAccepted] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(0);
 
-      <div>
-        <h2 className="text-2xl font-bold">{exam.examName}</h2>
-        <p className="text-blue-100">
-          Online Examination
-        </p>
-      </div>
+  useEffect(() => {
+    Promise.all([
+      api.get(`/exams/${examId}`),
+      api.get(`/questions?examId=${examId}`),
+    ]).then(([examRes, questionRes]) => {
+      setExam(examRes.data);
+      setQuestions(questionRes.data);
+      setTimeLeft((examRes.data?.duration || 60) * 60);
+    });
+  }, [examId]);
 
-      <div className="text-right">
+  useEffect(() => {
+    if (!instructionsAccepted || !exam) return;
 
-        <div className="text-lg font-semibold">
-          ⏰ {Math.floor(timeLeft / 60)}:
-          {String(timeLeft % 60).padStart(2, "0")}
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          submitExam();
+          return 0;
+        }
+
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [instructionsAccepted, exam]);
+
+  const submitExam = async () => {
+    const payload = {
+      exam: examId,
+      answers: Object.values(answers),
+      correctAnswers: 0,
+      wrongAnswers: 0,
+      skippedQuestions:
+        questions.length - Object.keys(answers).length,
+      marks: 0,
+      percentage: 0,
+      timeTaken: exam?.duration * 60 - timeLeft,
+      status: "passed",
+    };
+
+    await api.post("/exams/submit", payload);
+    navigate("/student/results");
+  };
+
+  const question = questions[currentIndex];
+
+  const progress = useMemo(() => {
+    if (!questions.length) return 0;
+
+    return Math.round(
+      (Object.keys(answers).length / questions.length) * 100
+    );
+  }, [answers, questions]);
+
+  if (!exam) {
+    return (
+      <div className="min-h-screen bg-slate-100 flex items-center justify-center">
+        <div className="bg-white rounded-2xl shadow-xl p-8">
+          <h2 className="text-2xl font-bold text-blue-700">
+            Loading Exam...
+          </h2>
         </div>
-
-        <div className="text-sm">
-          Progress {progress}%
-        </div>
-
       </div>
+    );
+  }
 
-    </div>
+  if (!instructionsAccepted) {
+    return (
+      <div className="min-h-screen bg-slate-100 flex items-center justify-center p-5">
+        <div className="bg-white rounded-2xl shadow-xl max-w-3xl w-full p-8">
 
+          <h2 className="text-3xl font-bold text-blue-700 mb-6">
+            📋 Exam Instructions
+          </h2>
 
+          <div className="bg-blue-50 border-l-4 border-blue-600 p-5 rounded-lg">
 
-    <div className="grid lg:grid-cols-4 gap-6 p-6">
+            <p className="leading-8 text-gray-700">
+              {exam.instructions ||
+                "Please read all instructions carefully before starting the examination."}
+            </p>
 
-      {/* Question Palette */}
+          </div>
 
-      <div className="bg-white rounded-xl shadow-md p-5">
+          <div className="mt-8 flex items-center gap-3">
 
-        <h3 className="font-bold text-lg mb-4">
-          Questions
-        </h3>
-
-        <div className="grid grid-cols-5 gap-3">
-
-          {questions.map((q, i) => (
-
-            <button
-              key={q._id}
-              onClick={() => setCurrentIndex(i)}
-              className={`h-11 rounded-lg font-semibold transition
-
-              ${
-                answers[q._id]
-                  ? "bg-green-500 text-white"
-                  : currentIndex === i
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-200 hover:bg-gray-300"
+            <input
+              type="checkbox"
+              checked={instructionsAccepted}
+              onChange={() =>
+                setInstructionsAccepted(true)
               }
-              `}
-            >
-              {i + 1}
-            </button>
+              className="w-5 h-5"
+            />
 
-          ))}
+            <span>
+              I have read all the instructions.
+            </span>
+
+          </div>
+
+          <button
+            onClick={() =>
+              setInstructionsAccepted(true)
+            }
+            className="mt-8 w-full bg-blue-700 hover:bg-blue-800 text-white py-3 rounded-xl font-semibold"
+          >
+            Start Exam
+          </button>
+
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-slate-100">
+
+      {/* Header */}
+
+      <div className="bg-blue-700 text-white shadow-lg px-8 py-5 flex justify-between items-center">
+
+        <div>
+
+          <h2 className="text-2xl font-bold">
+            {exam.examName}
+          </h2>
+
+          <p className="text-blue-100">
+            Online Assessment Portal
+          </p>
 
         </div>
 
-        <hr className="my-6"/>
+        <div className="text-right">
 
-        <button
-          onClick={submitExam}
-          className="w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg font-semibold"
-        >
-          Submit Exam
-        </button>
+          <div className="text-2xl font-bold">
+            ⏰ {Math.floor(timeLeft / 60)}:
+            {String(timeLeft % 60).padStart(2, "0")}
+          </div>
+
+          <div>
+            Progress : {progress}%
+          </div>
+
+        </div>
 
       </div>
 
+      <div className="grid lg:grid-cols-4 gap-6 p-6">
 
+        {/* Left Side */}
 
-      {/* Question */}
+        <div className="bg-white rounded-2xl shadow-lg p-5">
 
-      <div className="lg:col-span-3">
+          <h3 className="text-xl font-bold text-blue-700 mb-5">
+            Questions
+          </h3>
 
-        <div className="bg-white rounded-xl shadow-md p-8">
+          <div className="grid grid-cols-5 gap-3">
 
-          <div className="mb-5">
+            {questions.map((q, i) => (
+              <button
+                key={q._id}
+                onClick={() => setCurrentIndex(i)}
+                className={`h-11 rounded-lg font-semibold transition ${
+                  answers[q._id]
+                    ? "bg-green-500 text-white"
+                    : currentIndex === i
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-200 hover:bg-gray-300"
+                }`}
+              >
+                {i + 1}
+              </button>
+            ))}
 
-            <div className="flex justify-between">
+          </div>
 
-              <span className="font-semibold text-blue-600">
+          <button
+            onClick={submitExam}
+            className="mt-8 w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg font-semibold"
+          >
+            Submit Exam
+          </button>
+
+        </div>
+
+        {/* Right Side */}
+
+        <div className="lg:col-span-3">
+
+          <div className="bg-white rounded-2xl shadow-lg p-8">
+                        <div className="flex justify-between items-center mb-6">
+
+              <h3 className="text-2xl font-bold text-blue-700">
                 Question {currentIndex + 1}
-              </span>
+              </h3>
 
               <span className="text-gray-500">
                 {questions.length} Questions
@@ -97,155 +221,101 @@ return (
 
             </div>
 
-          </div>
+            {/* Progress Bar */}
 
+            <div className="w-full h-3 bg-gray-200 rounded-full mb-8">
 
+              <div
+                className="h-3 bg-blue-600 rounded-full transition-all duration-300"
+                style={{
+                  width: `${progress}%`,
+                }}
+              />
 
-          {/* Progress */}
+            </div>
 
-          <div className="w-full h-3 bg-gray-200 rounded-full mb-8">
+            {/* Question */}
 
-            <div
-              className="bg-blue-600 h-3 rounded-full transition-all"
-              style={{
-                width: `${progress}%`,
-              }}
-            />
+            <h2 className="text-2xl font-semibold text-gray-800 mb-8 leading-relaxed">
+              {question?.question}
+            </h2>
 
-          </div>
+            {/* Options */}
 
+            <div className="space-y-4">
 
+              {question?.options?.map((option, index) => (
 
-          <h3 className="text-2xl font-semibold mb-8">
+                <label
+                  key={index}
+                  className={`flex items-center gap-4 border-2 rounded-xl p-4 cursor-pointer transition-all duration-200
 
-            {question?.question}
-
-          </h3>
-
-
-
-          <div className="space-y-4">
-
-            {question?.options?.map((option, index) => (
-
-              <label
-                key={index}
-                className={`flex items-center gap-4 border rounded-xl p-4 cursor-pointer transition
-
-                ${
-                  answers[question._id] === option
-                    ? "border-blue-600 bg-blue-50"
-                    : "hover:bg-gray-100"
-                }
-
-                `}
-              >
-
-                <input
-                  type="radio"
-                  name={question._id}
-                  checked={answers[question._id] === option}
-                  onChange={() =>
-                    setAnswers({
-                      ...answers,
-                      [question._id]: option,
-                    })
+                  ${
+                    answers[question._id] === option
+                      ? "border-blue-600 bg-blue-50"
+                      : "border-gray-200 hover:bg-gray-50 hover:border-blue-300"
                   }
-                />
+                  `}
+                >
 
-                <span className="text-lg">
-                  {option}
-                </span>
+                  <input
+                    type="radio"
+                    name={question._id}
+                    checked={answers[question._id] === option}
+                    onChange={() =>
+                      setAnswers({
+                        ...answers,
+                        [question._id]: option,
+                      })
+                    }
+                    className="w-5 h-5"
+                  />
 
-              </label>
+                  <span className="text-lg">
+                    {option}
+                  </span>
 
-            ))}
+                </label>
 
-          </div>
+              ))}
 
+            </div>
 
+            {/* Navigation */}
 
-          <div className="flex justify-between mt-10">
+            <div className="flex justify-between mt-10">
 
-            <button
-              disabled={currentIndex === 0}
-              onClick={() =>
-                setCurrentIndex(currentIndex - 1)
-              }
-              className="bg-gray-300 hover:bg-gray-400 px-8 py-3 rounded-lg"
-            >
-              Previous
-            </button>
-
-            <button
-              onClick={() =>
-                setCurrentIndex(
-                  Math.min(
-                    questions.length - 1,
-                    currentIndex + 1
+              <button
+                disabled={currentIndex === 0}
+                onClick={() =>
+                  setCurrentIndex(
+                    Math.max(0, currentIndex - 1)
                   )
-                )
-              }
-              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg"
-            >
-              Next
-            </button>
+                }
+                className="bg-gray-300 hover:bg-gray-400 disabled:opacity-50 px-8 py-3 rounded-lg font-semibold"
+              >
+                ← Previous
+              </button>
+
+              <button
+                onClick={() =>
+                  setCurrentIndex(
+                    Math.min(
+                      questions.length - 1,
+                      currentIndex + 1
+                    )
+                  )
+                }
+                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold"
+              >
+                Next →
+              </button>
+
+            </div>
 
           </div>
 
         </div>
-
-      </div>
-
-    </div>
-
-  </div>
-);
-if (!instructionsAccepted) {
-  return (
-    <div className="min-h-screen bg-slate-100 flex justify-center items-center">
-
-      <div className="bg-white shadow-xl rounded-2xl w-full max-w-3xl p-10">
-
-        <h2 className="text-3xl font-bold text-blue-700 mb-6">
-          📋 Exam Instructions
-        </h2>
-
-        <div className="bg-blue-50 border-l-4 border-blue-600 p-5 rounded">
-
-          <p className="text-gray-700 leading-8">
-            {exam.instructions ||
-              "Please read all instructions carefully before starting the examination."}
-          </p>
-
-        </div>
-
-        <label className="flex items-center gap-3 mt-8">
-
-          <input
-            type="checkbox"
-            checked={instructionsAccepted}
-            onChange={() =>
-              setInstructionsAccepted(true)
-            }
-            className="w-5 h-5"
-          />
-
-          <span>
-            I have read and understood all instructions.
-          </span>
-
-        </label>
-
-        <button
-          onClick={() =>
-            setInstructionsAccepted(true)
-          }
-          disabled={!instructionsAccepted}
-          className="mt-8 w-full bg-blue-700 hover:bg-blue-800 disabled:bg-gray-400 text-white py-4 rounded-xl text-lg font-semibold"
-        >
-          Start Exam
-        </button>
 
       </div>
 
