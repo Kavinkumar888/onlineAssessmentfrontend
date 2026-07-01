@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
 import LoginPage from './pages/LoginPage';
@@ -13,23 +14,63 @@ import StudentDashboard from './pages/student/StudentDashboard';
 import AvailableExamsPage from './pages/student/AvailableExamsPage';
 import ResultsPageStudent from './pages/student/ResultsPageStudent';
 import ExamTakingPage from './pages/student/ExamTakingPage';
+import LoadingScreen from "./components/LoadingScreen";
 import { AuthProvider, useAuth } from './context/AuthContext';
 
 function ProtectedRoute({ children, role }) {
   const { user, loading } = useAuth();
-  if (loading) return <div className="p-6">Loading...</div>;
+
+  const [showLoader, setShowLoader] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowLoader(false);
+    }, 2000); // 2 seconds
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading || showLoader) {
+    return <LoadingScreen />;
+  }
+
   if (!user) return <Navigate to="/login" replace />;
-  if (role && user.role !== role) return <Navigate to="/" replace />;
+
+  if (role && user.role !== role) {
+    return <Navigate to="/" replace />;
+  }
+
   return children;
 }
 
 function AppRoutes() {
   const { user } = useAuth();
+
   return (
     <Router>
       <Routes>
-        <Route path="/login" element={user ? <Navigate to={user.role === 'admin' ? '/admin' : '/student'} replace /> : <LoginPage />} />
-        <Route path="/admin" element={<ProtectedRoute role="admin"><AdminLayout /></ProtectedRoute>}>
+        <Route
+          path="/login"
+          element={
+            user ? (
+              <Navigate
+                to={user.role === 'admin' ? '/admin' : '/student'}
+                replace
+              />
+            ) : (
+              <LoginPage />
+            )
+          }
+        />
+
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute role="admin">
+              <AdminLayout />
+            </ProtectedRoute>
+          }
+        >
           <Route index element={<AdminDashboard />} />
           <Route path="students" element={<StudentManagement />} />
           <Route path="exams" element={<ExamManagement />} />
@@ -37,13 +78,30 @@ function AppRoutes() {
           <Route path="results" element={<ResultsPage />} />
           <Route path="analytics" element={<AnalyticsPage />} />
         </Route>
-        <Route path="/student" element={<ProtectedRoute role="student"><StudentLayout /></ProtectedRoute>}>
+
+        <Route
+          path="/student"
+          element={
+            <ProtectedRoute role="student">
+              <StudentLayout />
+            </ProtectedRoute>
+          }
+        >
           <Route index element={<StudentDashboard />} />
           <Route path="exams" element={<AvailableExamsPage />} />
           <Route path="results" element={<ResultsPageStudent />} />
           <Route path="take/:examId" element={<ExamTakingPage />} />
         </Route>
-        <Route path="*" element={<Navigate to={user?.role === 'admin' ? '/admin' : '/student'} replace />} />
+
+        <Route
+          path="*"
+          element={
+            <Navigate
+              to={user?.role === 'admin' ? '/admin' : '/student'}
+              replace
+            />
+          }
+        />
       </Routes>
     </Router>
   );
