@@ -35,17 +35,17 @@ export default function LoginPage() {
         <div className="hidden md:flex flex-col justify-center bg-gradient-to-br from-blue-700 via-sky-600 to-cyan-500 text-white p-10">
 
           <h1 className="text-5xl font-bold mb-6">
-            🎓 Online Exam
+            🎓 Online Examination
           </h1>
 
           <p className="text-lg leading-8 text-blue-100">
             Welcome to the Secure Online Examination Portal.
             <br />
-            Attend exams securely, view your results instantly,
+            Attend exams securely, view results instantly,
             and manage everything from one place.
           </p>
 
-          <div className="mt-10 space-y-4">
+          <div className="mt-10 space-y-4 text-lg">
 
             <div className="flex items-center gap-3">
               ✅ Secure Login
@@ -68,7 +68,7 @@ export default function LoginPage() {
         </div>
 
         {/* Right Side */}
-        <div className="p-10 flex items-center">
+        <div className="flex items-center p-10">
 
           <form
             onSubmit={handleSubmit}
@@ -97,9 +97,11 @@ export default function LoginPage() {
               </div>
             )}
 
+            {/* Email */}
+
             <div className="mb-5">
 
-              <label className="block mb-2 font-medium text-gray-700">
+              <label className="block mb-2 font-semibold text-gray-700">
                 Email / Register Number
               </label>
 
@@ -108,14 +110,17 @@ export default function LoginPage() {
                 value={identifier}
                 onChange={(e) => setIdentifier(e.target.value)}
                 placeholder="Enter Email or Register Number"
-                className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-blue-500 outline-none transition"
+                autoComplete="username"
+                className="w-full rounded-xl border-2 border-gray-300 bg-white text-black placeholder-gray-400 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none"
               />
 
             </div>
 
+            {/* Password */}
+
             <div className="mb-6">
 
-              <label className="block mb-2 font-medium text-gray-700">
+              <label className="block mb-2 font-semibold text-gray-700">
                 Password
               </label>
 
@@ -124,16 +129,17 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter Password"
-                className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-blue-500 outline-none transition"
+                autoComplete="current-password"
+                className="w-full rounded-xl border-2 border-gray-300 bg-white text-black placeholder-gray-400 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none"
               />
 
             </div>
 
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white py-3 rounded-xl font-semibold text-lg hover:scale-[1.02] transition duration-300 shadow-lg"
+              className="w-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white py-3 rounded-xl font-semibold text-lg hover:from-blue-700 hover:to-cyan-600 transition-all duration-300 shadow-lg"
             >
-              Login →
+              🔐 Login
             </button>
 
             <div className="mt-8 text-center text-gray-500 text-sm">
