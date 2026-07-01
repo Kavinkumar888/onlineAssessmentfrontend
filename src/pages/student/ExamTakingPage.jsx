@@ -48,8 +48,7 @@ export default function ExamTakingPage() {
       answers: Object.values(answers),
       correctAnswers: 0,
       wrongAnswers: 0,
-      skippedQuestions:
-        questions.length - Object.keys(answers).length,
+      skippedQuestions: questions.length - Object.keys(answers).length,
       marks: 0,
       percentage: 0,
       timeTaken: exam?.duration * 60 - timeLeft,
@@ -72,9 +71,9 @@ export default function ExamTakingPage() {
 
   if (!exam) {
     return (
-      <div className="min-h-screen bg-slate-100 flex items-center justify-center">
+      <div className="min-h-screen bg-slate-100 text-black flex items-center justify-center">
         <div className="bg-white rounded-2xl shadow-xl p-8">
-          <h2 className="text-2xl font-bold text-blue-700">
+          <h2 className="text-2xl font-bold text-black">
             Loading Exam...
           </h2>
         </div>
@@ -84,16 +83,16 @@ export default function ExamTakingPage() {
 
   if (!instructionsAccepted) {
     return (
-      <div className="min-h-screen bg-slate-100 flex items-center justify-center p-5">
+      <div className="min-h-screen bg-slate-100 text-black flex items-center justify-center p-5">
         <div className="bg-white rounded-2xl shadow-xl max-w-3xl w-full p-8">
 
-          <h2 className="text-3xl font-bold text-blue-700 mb-6">
+          <h2 className="text-3xl font-bold text-black mb-6">
             📋 Exam Instructions
           </h2>
 
           <div className="bg-blue-50 border-l-4 border-blue-600 p-5 rounded-lg">
 
-            <p className="leading-8 text-gray-700">
+            <p className="leading-8 text-black">
               {exam.instructions ||
                 "Please read all instructions carefully before starting the examination."}
             </p>
@@ -105,23 +104,19 @@ export default function ExamTakingPage() {
             <input
               type="checkbox"
               checked={instructionsAccepted}
-              onChange={() =>
-                setInstructionsAccepted(true)
-              }
+              onChange={() => setInstructionsAccepted(true)}
               className="w-5 h-5"
             />
 
-            <span>
+            <span className="text-black font-medium">
               I have read all the instructions.
             </span>
 
           </div>
 
           <button
-            onClick={() =>
-              setInstructionsAccepted(true)
-            }
-            className="mt-8 w-full bg-blue-700 hover:bg-blue-800 text-white py-3 rounded-xl font-semibold"
+            onClick={() => setInstructionsAccepted(true)}
+            className="mt-8 w-full bg-blue-700 hover:bg-blue-800 text-white py-3 rounded-xl font-semibold transition"
           >
             Start Exam
           </button>
@@ -132,7 +127,7 @@ export default function ExamTakingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-100">
+    <div className="min-h-screen bg-slate-100 text-black">
 
       {/* Header */}
 
@@ -164,14 +159,13 @@ export default function ExamTakingPage() {
         </div>
 
       </div>
-
-      <div className="grid lg:grid-cols-4 gap-6 p-6">
+            <div className="grid lg:grid-cols-4 gap-6 p-6">
 
         {/* Left Side */}
 
         <div className="bg-white rounded-2xl shadow-lg p-5">
 
-          <h3 className="text-xl font-bold text-blue-700 mb-5">
+          <h3 className="text-xl font-bold text-black mb-5">
             Questions
           </h3>
 
@@ -181,12 +175,12 @@ export default function ExamTakingPage() {
               <button
                 key={q._id}
                 onClick={() => setCurrentIndex(i)}
-                className={`h-11 rounded-lg font-semibold transition ${
+                className={`h-11 rounded-lg font-semibold transition-all duration-200 ${
                   answers[q._id]
                     ? "bg-green-500 text-white"
                     : currentIndex === i
                     ? "bg-blue-600 text-white"
-                    : "bg-gray-200 hover:bg-gray-300"
+                    : "bg-gray-200 text-black hover:bg-gray-300"
                 }`}
               >
                 {i + 1}
@@ -197,7 +191,7 @@ export default function ExamTakingPage() {
 
           <button
             onClick={submitExam}
-            className="mt-8 w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg font-semibold"
+            className="mt-8 w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg font-semibold transition"
           >
             Submit Exam
           </button>
@@ -209,13 +203,14 @@ export default function ExamTakingPage() {
         <div className="lg:col-span-3">
 
           <div className="bg-white rounded-2xl shadow-lg p-8">
-                        <div className="flex justify-between items-center mb-6">
 
-              <h3 className="text-2xl font-bold text-blue-700">
+            <div className="flex justify-between items-center mb-6">
+
+              <h3 className="text-2xl font-bold text-black">
                 Question {currentIndex + 1}
               </h3>
 
-              <span className="text-gray-500">
+              <span className="text-black font-medium">
                 {questions.length} Questions
               </span>
 
@@ -223,7 +218,7 @@ export default function ExamTakingPage() {
 
             {/* Progress Bar */}
 
-            <div className="w-full h-3 bg-gray-200 rounded-full mb-8">
+            <div className="w-full h-3 bg-gray-200 rounded-full mb-8 overflow-hidden">
 
               <div
                 className="h-3 bg-blue-600 rounded-full transition-all duration-300"
@@ -236,8 +231,10 @@ export default function ExamTakingPage() {
 
             {/* Question */}
 
-            <h2 className="text-2xl font-semibold text-gray-800 mb-8 leading-relaxed">
+            <h2 className="text-2xl font-semibold text-black mb-8 leading-relaxed">
+
               {question?.question}
+
             </h2>
 
             {/* Options */}
@@ -248,14 +245,11 @@ export default function ExamTakingPage() {
 
                 <label
                   key={index}
-                  className={`flex items-center gap-4 border-2 rounded-xl p-4 cursor-pointer transition-all duration-200
-
-                  ${
+                  className={`flex items-center gap-4 border-2 rounded-xl p-4 cursor-pointer transition-all duration-200 ${
                     answers[question._id] === option
                       ? "border-blue-600 bg-blue-50"
-                      : "border-gray-200 hover:bg-gray-50 hover:border-blue-300"
-                  }
-                  `}
+                      : "border-gray-300 hover:bg-gray-50 hover:border-blue-400"
+                  }`}
                 >
 
                   <input
@@ -268,10 +262,10 @@ export default function ExamTakingPage() {
                         [question._id]: option,
                       })
                     }
-                    className="w-5 h-5"
+                    className="w-5 h-5 accent-blue-600"
                   />
 
-                  <span className="text-lg">
+                  <span className="text-lg text-black font-medium">
                     {option}
                   </span>
 
@@ -280,19 +274,16 @@ export default function ExamTakingPage() {
               ))}
 
             </div>
+                        {/* Navigation */}
 
-            {/* Navigation */}
-
-            <div className="flex justify-between mt-10">
+            <div className="flex justify-between items-center mt-10">
 
               <button
                 disabled={currentIndex === 0}
                 onClick={() =>
-                  setCurrentIndex(
-                    Math.max(0, currentIndex - 1)
-                  )
+                  setCurrentIndex(Math.max(0, currentIndex - 1))
                 }
-                className="bg-gray-300 hover:bg-gray-400 disabled:opacity-50 px-8 py-3 rounded-lg font-semibold"
+                className="px-8 py-3 rounded-lg font-semibold bg-gray-300 text-black hover:bg-gray-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >
                 ← Previous
               </button>
@@ -306,9 +297,11 @@ export default function ExamTakingPage() {
                     )
                   )
                 }
-                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold"
+                className="px-8 py-3 rounded-lg font-semibold bg-blue-600 hover:bg-blue-700 text-white transition-all"
               >
-                Next →
+                {currentIndex === questions.length - 1
+                  ? "Finish"
+                  : "Next →"}
               </button>
 
             </div>
