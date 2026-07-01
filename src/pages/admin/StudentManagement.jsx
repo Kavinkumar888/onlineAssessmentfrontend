@@ -3,6 +3,7 @@ import api from "../../services/api";
 
 export default function StudentManagement() {
   const [students, setStudents] = useState([]);
+
   const [form, setForm] = useState({
     name: "",
     registerNumber: "",
@@ -14,8 +15,12 @@ export default function StudentManagement() {
   });
 
   const loadStudents = async () => {
-    const res = await api.get("/students");
-    setStudents(res.data);
+    try {
+      const res = await api.get("/students");
+      setStudents(res.data);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   useEffect(() => {
@@ -25,44 +30,55 @@ export default function StudentManagement() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    await api.post("/students", form);
+    try {
+      await api.post("/students", form);
 
-    setForm({
-      name: "",
-      registerNumber: "",
-      department: "",
-      year: "",
-      email: "",
-      phone: "",
-      password: "",
-    });
+      setForm({
+        name: "",
+        registerNumber: "",
+        department: "",
+        year: "",
+        email: "",
+        phone: "",
+        password: "",
+      });
 
-    loadStudents();
+      loadStudents();
+    } catch (err) {
+      alert(err.response?.data?.message || "Failed to create student");
+    }
   };
 
   const toggleStatus = async (id) => {
-    await api.patch(`/students/${id}/toggle-status`);
-    loadStudents();
+    try {
+      await api.patch(`/students/${id}/toggle-status`);
+      loadStudents();
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
-    <div className="space-y-8">
+    <div className="min-h-screen bg-slate-100 p-6">
 
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-slate-800">
+
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold text-slate-800">
           👨‍🎓 Student Management
         </h1>
+
         <p className="text-gray-500 mt-2">
-          Create and manage student accounts.
+          Create and manage student accounts easily.
         </p>
       </div>
 
-      {/* Create Student */}
-      <div className="bg-white rounded-3xl shadow-xl p-8">
+      {/* Add Student Card */}
+
+      <div className="bg-white rounded-3xl shadow-xl p-8 mb-10">
 
         <h2 className="text-2xl font-bold text-blue-700 mb-6">
-          Add New Student
+          ➕ Add New Student
         </h2>
 
         <form
@@ -71,16 +87,20 @@ export default function StudentManagement() {
         >
 
           <input
-            className="border rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none"
+            type="text"
             placeholder="Student Name"
             value={form.name}
             onChange={(e) =>
-              setForm({ ...form, name: e.target.value })
+              setForm({
+                ...form,
+                name: e.target.value,
+              })
             }
+            className="w-full rounded-xl border border-gray-300 bg-white text-black placeholder-gray-500 p-3 focus:ring-2 focus:ring-blue-500 outline-none"
           />
 
           <input
-            className="border rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none"
+            type="text"
             placeholder="Register Number"
             value={form.registerNumber}
             onChange={(e) =>
@@ -89,10 +109,11 @@ export default function StudentManagement() {
                 registerNumber: e.target.value,
               })
             }
+            className="w-full rounded-xl border border-gray-300 bg-white text-black placeholder-gray-500 p-3 focus:ring-2 focus:ring-blue-500 outline-none"
           />
 
           <input
-            className="border rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none"
+            type="text"
             placeholder="Department"
             value={form.department}
             onChange={(e) =>
@@ -101,10 +122,11 @@ export default function StudentManagement() {
                 department: e.target.value,
               })
             }
+            className="w-full rounded-xl border border-gray-300 bg-white text-black placeholder-gray-500 p-3 focus:ring-2 focus:ring-blue-500 outline-none"
           />
 
           <input
-            className="border rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none"
+            type="text"
             placeholder="Year"
             value={form.year}
             onChange={(e) =>
@@ -113,11 +135,11 @@ export default function StudentManagement() {
                 year: e.target.value,
               })
             }
+            className="w-full rounded-xl border border-gray-300 bg-white text-black placeholder-gray-500 p-3 focus:ring-2 focus:ring-blue-500 outline-none"
           />
 
           <input
             type="email"
-            className="border rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none"
             placeholder="Email Address"
             value={form.email}
             onChange={(e) =>
@@ -126,10 +148,11 @@ export default function StudentManagement() {
                 email: e.target.value,
               })
             }
+            className="w-full rounded-xl border border-gray-300 bg-white text-black placeholder-gray-500 p-3 focus:ring-2 focus:ring-blue-500 outline-none"
           />
 
           <input
-            className="border rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none"
+            type="text"
             placeholder="Phone Number"
             value={form.phone}
             onChange={(e) =>
@@ -138,11 +161,11 @@ export default function StudentManagement() {
                 phone: e.target.value,
               })
             }
+            className="w-full rounded-xl border border-gray-300 bg-white text-black placeholder-gray-500 p-3 focus:ring-2 focus:ring-blue-500 outline-none"
           />
 
           <input
             type="password"
-            className="border rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none md:col-span-2"
             placeholder="Password"
             value={form.password}
             onChange={(e) =>
@@ -151,40 +174,46 @@ export default function StudentManagement() {
                 password: e.target.value,
               })
             }
+            className="md:col-span-2 w-full rounded-xl border border-gray-300 bg-white text-black placeholder-gray-500 p-3 focus:ring-2 focus:ring-blue-500 outline-none"
           />
 
           <button
             type="submit"
-            className="md:col-span-2 bg-gradient-to-r from-blue-600 to-cyan-500 text-white py-3 rounded-xl font-semibold hover:scale-[1.02] transition duration-300"
+            className="md:col-span-2 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-semibold hover:scale-[1.02] transition-all duration-300 shadow-lg"
           >
-            ➕ Save Student
+            Save Student
           </button>
 
         </form>
 
       </div>
+            {/* Student List */}
 
-      {/* Student List */}
       <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
 
-        <div className="px-6 py-5 border-b">
-          <h2 className="text-2xl font-bold text-blue-700">
+        <div className="bg-gradient-to-r from-blue-600 to-cyan-500 px-6 py-5">
+          <h2 className="text-2xl font-bold text-white">
             📋 Student List
           </h2>
         </div>
 
         <div className="overflow-x-auto">
 
-          <table className="min-w-full">
+          <table className="w-full">
 
-            <thead className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white">
+            <thead className="bg-slate-100">
 
-              <tr>
+              <tr className="text-slate-700">
+
                 <th className="px-6 py-4 text-left">Name</th>
                 <th className="px-6 py-4 text-left">Register No</th>
                 <th className="px-6 py-4 text-left">Department</th>
+                <th className="px-6 py-4 text-left">Year</th>
+                <th className="px-6 py-4 text-left">Email</th>
+                <th className="px-6 py-4 text-left">Phone</th>
                 <th className="px-6 py-4 text-center">Status</th>
                 <th className="px-6 py-4 text-center">Action</th>
+
               </tr>
 
             </thead>
@@ -192,37 +221,55 @@ export default function StudentManagement() {
             <tbody>
 
               {students.length === 0 ? (
+
                 <tr>
+
                   <td
-                    colSpan="5"
-                    className="text-center py-10 text-gray-500"
+                    colSpan="8"
+                    className="py-10 text-center text-gray-500"
                   >
-                    No students found.
+                    No Students Found
                   </td>
+
                 </tr>
+
               ) : (
+
                 students.map((student) => (
+
                   <tr
                     key={student._id}
-                    className="border-b hover:bg-blue-50 transition"
+                    className="border-b hover:bg-slate-50 transition duration-300"
                   >
 
-                    <td className="px-6 py-4 font-medium">
+                    <td className="px-6 py-4 font-semibold text-slate-700">
                       {student.name}
                     </td>
 
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4 text-slate-600">
                       {student.registerNumber}
                     </td>
 
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4 text-slate-600">
                       {student.department}
+                    </td>
+
+                    <td className="px-6 py-4 text-slate-600">
+                      {student.year}
+                    </td>
+
+                    <td className="px-6 py-4 text-slate-600">
+                      {student.email}
+                    </td>
+
+                    <td className="px-6 py-4 text-slate-600">
+                      {student.phone}
                     </td>
 
                     <td className="px-6 py-4 text-center">
 
                       <span
-                        className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                        className={`px-4 py-1 rounded-full text-sm font-semibold ${
                           student.status === "active"
                             ? "bg-green-100 text-green-700"
                             : "bg-red-100 text-red-700"
@@ -236,10 +283,8 @@ export default function StudentManagement() {
                     <td className="px-6 py-4 text-center">
 
                       <button
-                        onClick={() =>
-                          toggleStatus(student._id)
-                        }
-                        className={`px-4 py-2 rounded-lg text-white font-medium transition ${
+                        onClick={() => toggleStatus(student._id)}
+                        className={`px-5 py-2 rounded-lg text-white font-medium transition duration-300 ${
                           student.status === "active"
                             ? "bg-red-500 hover:bg-red-600"
                             : "bg-green-500 hover:bg-green-600"
@@ -253,7 +298,9 @@ export default function StudentManagement() {
                     </td>
 
                   </tr>
+
                 ))
+
               )}
 
             </tbody>
