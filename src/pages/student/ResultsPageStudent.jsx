@@ -85,13 +85,13 @@ export default function ResultsPageStudent() {
                     className="border-b hover:bg-blue-50 transition"
                   >
 
-                    <td className="py-5 px-5 font-semibold">
+                    <td className="py-5 px-5 font-semibold text-black">
 
                       {result.exam?.examName}
 
                     </td>
 
-                    <td className="py-5 px-5">
+                    <td className="py-5 px-5 text-black">
 
                       <span className="font-bold text-blue-700">
                         {result.marks}
@@ -99,7 +99,7 @@ export default function ResultsPageStudent() {
 
                     </td>
 
-                    <td className="py-5 px-5">
+                    <td className="py-5 px-5 text-black">
 
                       <div className="w-40">
 
