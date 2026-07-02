@@ -25,7 +25,7 @@ export default function LoadingScreen() {
 
           <div className="absolute inset-3 rounded-full bg-white flex items-center justify-center shadow-xl">
             <span className="text-blue-600 text-2xl font-bold">
-              Stasis Artics
+              Stasis Artis
             </span>
           </div>
         </div>
