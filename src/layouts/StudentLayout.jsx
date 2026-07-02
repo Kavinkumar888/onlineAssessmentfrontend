@@ -20,7 +20,7 @@ export default function StudentLayout() {
     <div className="flex h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50">
 
       {/* Sidebar */}
-      <aside className="w-72 bg-gradient-to-b from-blue-900 via-sky-800 to-cyan-900 text-white flex flex-col shadow-2xl">
+      <aside className="w-72 bg-gradient-to-b from-blue-900 via-sky-800 to-cyan-900 text-black flex flex-col shadow-2xl">
 
         {/* Logo */}
         <div className="p-6 border-b border-white/20">
