@@ -10,7 +10,7 @@ export default function AvailableExamsPage() {
   }, []);
 
   const publishedExams = exams.filter(
-    (exam) => exam.status === "published"
+    (exam) => exam.status === "active"
   );
 
   return (

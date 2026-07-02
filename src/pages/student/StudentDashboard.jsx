@@ -16,7 +16,7 @@ export default function StudentDashboard() {
   }, []);
 
   const publishedExams = exams.filter(
-    (exam) => exam.status === "published"
+    (exam) => exam.status === "active"
   );
 
   const passed = results.filter(
