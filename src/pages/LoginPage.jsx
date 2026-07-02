@@ -3,8 +3,8 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 export default function LoginPage() {
-  const [identifier, setIdentifier] = useState("admin@exam.com");
-  const [password, setPassword] = useState("Admin@123");
+  const [identifier, setIdentifier] = useState("student@gmail.com");
+  const [password, setPassword] = useState("student@123");
   const [error, setError] = useState("");
 
   const { login } = useAuth();
