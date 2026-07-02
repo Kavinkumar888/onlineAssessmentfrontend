@@ -48,7 +48,7 @@ export default function AnalyticsPage() {
 
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-slate-800">
+        <h1 className="text-3xl font-bold text-black-800">
           📈 Analytics Dashboard
         </h1>
         <p className="text-gray-500 mt-2">
@@ -66,17 +66,17 @@ export default function AnalyticsPage() {
             <div className="flex items-center justify-between">
 
               <div>
-                <p className="text-gray-500 text-sm">
+                <p className="text-black text-sm">
                   {item.title}
                 </p>
 
-                <h2 className="text-4xl font-bold text-slate-800 mt-3">
+                <h2 className="text-4xl font-bold text-black mt-3">
                   {item.value}
                 </h2>
               </div>
 
               <div
-                className={`w-16 h-16 rounded-2xl bg-gradient-to-r ${item.color} flex items-center justify-center text-3xl text-white shadow-lg`}
+                className={`w-16 h-16 rounded-2xl bg-gradient-to-r ${item.color} flex items-center justify-center text-3xl text-black shadow-lg`}
               >
                 {item.icon}
               </div>
@@ -98,8 +98,8 @@ export default function AnalyticsPage() {
           {/* Highest */}
           <div>
             <div className="flex justify-between mb-2">
-              <span className="font-medium">Highest Score</span>
-              <span className="font-bold">{stats.highest}</span>
+              <span className="font-medium text-black">Highest Score</span>
+              <span className="font-bold text-black">{stats.highest}</span>
             </div>
 
             <div className="w-full h-3 bg-gray-200 rounded-full">
@@ -112,14 +112,14 @@ export default function AnalyticsPage() {
 
           {/* Average */}
           <div>
-            <div className="flex justify-between mb-2">
-              <span className="font-medium">Average Score</span>
+            <div className="flex justify-between text-black mb-2">
+              <span className="font-medium text-black">Average Score</span>
               <span className="font-bold">{stats.average}</span>
             </div>
 
             <div className="w-full h-3 bg-gray-200 rounded-full">
               <div
-                className="h-3 rounded-full bg-blue-500"
+                className="h-3 rounded-full bg-blue-500 text-black"
                 style={{ width: `${stats.average}%` }}
               ></div>
             </div>
@@ -127,12 +127,12 @@ export default function AnalyticsPage() {
 
           {/* Pass Rate */}
           <div>
-            <div className="flex justify-between mb-2">
+            <div className="flex justify-between mb-2 text-black">
               <span className="font-medium">Pass Percentage</span>
               <span className="font-bold">{stats.passRate}%</span>
             </div>
 
-            <div className="w-full h-3 bg-gray-200 rounded-full">
+            <div className="w-full h-3 bg-gray-200 rounded-full text-black">
               <div
                 className="h-3 rounded-full bg-purple-500"
                 style={{ width: `${stats.passRate}%` }}

@@ -68,7 +68,7 @@ export default function ResultsPage() {
                       {result.student?.name}
                     </td>
 
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4 text-black">
                       {result.exam?.examName}
                     </td>
 
@@ -76,7 +76,7 @@ export default function ResultsPage() {
                       {result.marks}
                     </td>
 
-                    <td className="px-6 py-4 text-center">
+                    <td className="px-6 py-4 text-center text-black">
 
                       <span
                         className={`px-4 py-1 rounded-full text-sm font-semibold ${
@@ -91,7 +91,7 @@ export default function ResultsPage() {
 
                     </td>
 
-                    <td className="px-6 py-4 text-center">
+                    <td className="px-6 py-4 text-center text-black">
                       {result.timeTaken}s
                     </td>
 

@@ -1,12 +1,11 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-
 export default function LoginPage() {
   const [identifier, setIdentifier] = useState("student@gmail.com");
   const [password, setPassword] = useState("student@123");
   const [error, setError] = useState("");
-
+const [showPassword, setShowPassword] = useState(false); 
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -118,22 +117,36 @@ export default function LoginPage() {
 
             {/* Password */}
 
-            <div className="mb-6">
+           {/* Password */}
 
-              <label className="block mb-2 font-semibold text-gray-700">
-                Password
-              </label>
+<div className="mb-6">
 
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter Password"
-                autoComplete="current-password"
-                className="w-full rounded-xl border-2 border-gray-300 bg-white text-black placeholder-gray-400 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none"
-              />
+  <label className="block mb-2 font-semibold text-gray-700">
+    Password
+  </label>
 
-            </div>
+  <div className="relative">
+
+    <input
+      type={showPassword ? "text" : "password"}
+      value={password}
+      onChange={(e) => setPassword(e.target.value)}
+      placeholder="Enter Password"
+      autoComplete="current-password"
+      className="w-full rounded-xl border-2 border-gray-300 bg-white text-black placeholder-gray-400 px-4 py-3 pr-20 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none"
+    />
+
+    <button
+      type="button"
+      onClick={() => setShowPassword(!showPassword)}
+      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 hover:text-blue-600"
+    >
+      {showPassword ? " Hide" : "👁 Show"}
+    </button>
+
+  </div>
+
+</div>
 
             <button
               type="submit"
